@@ -6,7 +6,9 @@ import {
 } from "react-icons/ai";
 import { FaRegUserCircle } from "react-icons/fa";
 import { HiOutlineMail } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useCreateUserMutation } from "../../features/Auth/AuthApiSlice";
+import { storeToken } from "../Help";
 const SignUpForm = () => {
   const [inputType, setInputType] = useState("password");
   const handleShowPassword = (e) => {
@@ -19,9 +21,30 @@ const SignUpForm = () => {
     }
   };
 
+  const [newData, setNewData] = useState({
+    name: "",
+    email: "",
+    password: "",
+
+    phone: "",
+  });
+
+  const [createUser] = useCreateUserMutation();
+
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const res = await createUser(newData);
+
+    if (res?.data) {
+      storeToken(res?.data?.access_token);
+      navigate("/");
+    }
+  };
+
   return (
     <div className="w-full p-4">
-      <form className=" space-y-4">
+      <form className=" space-y-4" onSubmit={handleSubmit}>
         <div className=" gap-x-2">
           <div className="flex flex-col gap-y-1 my-2 text-sm">
             <label className="self-start" htmlFor="">
@@ -32,10 +55,14 @@ const SignUpForm = () => {
               <input
                 type="text"
                 placeholder="Enter Your Name"
-                name="fullname"
-                //   value={values.fullname}
-                //   onChange={handleChange}
-                //   onBlur={handleBlur}
+                name="name"
+                value={newData?.name}
+                onChange={(e) =>
+                  setNewData({
+                    ...newData,
+                    name: e.target.value,
+                  })
+                }
                 className=" outline-none border-none w-full  bg-transparent text-gray-500"
               />
             </div>
@@ -50,9 +77,13 @@ const SignUpForm = () => {
                 type="text"
                 placeholder="Enter Number"
                 name="phone"
-                //   value={values.phone}
-                //   onChange={handleChange}
-                //   onBlur={handleBlur}
+                value={newData?.phone}
+                onChange={(e) =>
+                  setNewData({
+                    ...newData,
+                    phone: e.target.value,
+                  })
+                }
                 className=" outline-none border-none w-full  bg-transparent text-gray-500 -ml-0.5"
               />
             </div>
@@ -69,6 +100,13 @@ const SignUpForm = () => {
               placeholder="Enter Email Address"
               name="email"
               className=" outline-none border-none w-full  bg-transparent text-gray-500"
+              value={newData?.email}
+              onChange={(e) =>
+                setNewData({
+                  ...newData,
+                  email: e.target.value,
+                })
+              }
             />
           </div>
         </div>
@@ -89,9 +127,13 @@ const SignUpForm = () => {
               type={inputType}
               placeholder="Enter Password"
               name="password"
-              // value={values.password}
-              // onChange={handleChange}
-              // onBlur={handleBlur}
+              value={newData?.password}
+              onChange={(e) =>
+                setNewData({
+                  ...newData,
+                  password: e.target.value,
+                })
+              }
               className=" outline-none border-none w-full  bg-transparent text-gray-500"
             />
           </div>
@@ -110,7 +152,7 @@ const SignUpForm = () => {
         <div className=" my-4 w-full mx-auto flex justify-center items-center ">
           <p className="text-center my-4">
             Already have an account?{" "}
-            <Link className="text-[#0052cc] cursor-pointer" to="/">
+            <Link className="text-[#0052cc] cursor-pointer" to="/login">
               Sign in
             </Link>
           </p>

@@ -1,7 +1,9 @@
 import React from "react";
 
 const RenterCreate = () => {
-  return <div>RenterCreate</div>;
+  return <div>
+    
+  </div>;
 };
 
 export default RenterCreate;
