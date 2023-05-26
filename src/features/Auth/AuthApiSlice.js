@@ -43,7 +43,24 @@ export const authApiSlice = apiRequest.injectEndpoints({
       },
       invalidatesTags: ["Auth"],
     }),
+    userDetails: builder.query({
+      query: (access_token) => {
+        return {
+          url: `/myprofile`,
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+        };
+      },
+      providesTags: [""],
+    }),
   }),
 });
 
-export const { useCreateUserMutation, useLoginUserMutation } = authApiSlice;
+export const {
+  useCreateUserMutation,
+  useLoginUserMutation,
+  useUserDetailsQuery,
+} = authApiSlice;
